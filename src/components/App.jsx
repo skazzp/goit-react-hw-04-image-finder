@@ -1,5 +1,5 @@
 // import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import * as API from '../services/api';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -7,6 +7,8 @@ import Button from './Button/Button';
 import Modal from './Modal/Modal';
 import Loader from './Loader/Loader';
 import { Container } from './App.styled';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const [response, setResponse] = useState([]);
@@ -19,32 +21,30 @@ const App = () => {
 
   const getData = async () => {
     setIsLoading(() => true);
+    try {
+      const data = await API.getPictures(query, page);
+      console.log(data);
+      if (!data.hits.length) {
+        setError({ message: 'Response is empty', status: 'warning' });
 
-    const data = await API.getPictures(query, page);
-    console.log(data);
-    if (data)
+        throw error;
+      }
+
       setResponse(prevResponse =>
         !prevResponse ? data.hits : [...prevResponse, ...data.hits]
       );
-    // else {
-    //   setError(() => data);
-    // }
+    } catch (error) {
+      console.log(error);
+      setResponse([]);
+    }
     setIsLoading(false);
   };
-  useEffect(() => {
-    if (!query) return;
-    setPage(1);
-    setResponse([]);
-    if (page === 1) getData();
-  }, [query]);
-  useEffect(() => {
-    if (!query) return;
-    getData();
-  }, [page]);
 
   const getQuery = value => {
     setQuery(value);
   };
+  const resetError = useCallback(() => setError(null), []);
+
   const changePage = () => {
     setPage(prevPage => {
       return prevPage + 1;
@@ -56,6 +56,31 @@ const App = () => {
     });
     setModalData(modalData);
   };
+
+  useEffect(() => {
+    if (!query) return;
+    setPage(1);
+    setResponse([]);
+    if (page === 1) getData();
+    // eslint-disable-next-line
+  }, [query]);
+
+  useEffect(() => {
+    if (!query) return;
+    getData();
+    // eslint-disable-next-line
+  }, [page]);
+
+  useEffect(() => {
+    error &&
+      toast[error.notify?.status || error.status](
+        error.notify?.message || error.message
+      );
+    // error;
+    // }, [error]);
+    error && resetError(null);
+  }, [error, resetError]);
+
   return (
     <>
       <Searchbar getQuery={getQuery} />
@@ -68,67 +93,9 @@ const App = () => {
         )}
       </Container>
       {isModalOpen && <Modal {...modalData} toggleModal={toggleModal} />}
+      <ToastContainer />
     </>
   );
 };
 
 export default App;
-
-// export class App extends Component {
-//   state = {
-//     response: [],
-//     query: '',
-//     isLoading: false,
-//     error: null,
-//     page: 1,
-//     isModalOpen: false,
-//     modalData: null,
-//   };
-// async componentDidUpdate(prevProps, prevState) {
-//   if (this.state.query !== prevState.query) {
-//     this.setState({ isLoading: true, response: [], page: 1 });
-//     const { query } = this.state;
-//     const response = await API.getPictures(query, 1);
-//     this.setState({ response: response.hits, isLoading: false });
-//   }
-//   if (
-//     this.state.page !== prevState.page &&
-//     this.state.query === prevState.query &&
-//     this.state.page !== 1
-//   ) {
-//     this.setState({ isLoading: true });
-//     const { query, page } = this.state;
-//     const response = await API.getPictures(query, page);
-//     this.setState(prevState => ({
-//       response: [...prevState.response, ...response.hits],
-//       isLoading: false,
-//     }));
-//   }
-// }
-//   setQuery = value => {
-//     this.setState({ query: value });
-//   };
-//   changePage = () => {
-//     this.setState(prev => ({ page: prev.page + 1 }));
-//   };
-//   toggleModal = (modalData = null) => {
-//     this.setState(prev => ({
-//       isModalOpen: !prev.isModalOpen,
-//       modalData,
-//     }));
-//   };
-//   render() {
-//     const { response, modalData, isModalOpen } = this.state;
-//     return (
-//       <>
-//         <Searchbar setQuery={this.setQuery} />
-//         <Container>
-//           {this.state.isLoading && <Loader />}
-//           <ImageGallery data={response} toggleModal={this.toggleModal} />
-//           {response.length > 0 && <Button changePage={this.changePage} />}
-//         </Container>
-//         {isModalOpen && <Modal {...modalData} toggleModal={this.toggleModal} />}
-//       </>
-//     );
-//   }
-// }

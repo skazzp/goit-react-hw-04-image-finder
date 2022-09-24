@@ -6,23 +6,28 @@ const Modal = ({ toggleModal, largeImageURL }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
+    const handleClose = e => {
+      if (e.code === 'Escape') {
+        toggleModal();
+      }
+    };
     window.addEventListener('keydown', handleClose);
     console.log('add');
     return () => {
       window.removeEventListener('keydown', handleClose);
       console.log('rem');
     };
-  }, [isOpen]);
+  }, [isOpen, toggleModal]);
 
-  const handleClose = e => {
-    if (e.target === e.currentTarget || e.code === 'Escape') {
+  const handleCloseModal = e => {
+    if (e.target === e.currentTarget) {
       toggleModal();
       setIsOpen(false);
     }
   };
 
   return (
-    <Overlay onClick={handleClose}>
+    <Overlay onClick={handleCloseModal}>
       <ModalPic>
         <img src={largeImageURL} alt="" />
       </ModalPic>
