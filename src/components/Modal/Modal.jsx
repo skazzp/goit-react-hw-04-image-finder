@@ -12,10 +12,8 @@ const Modal = ({ toggleModal, largeImageURL }) => {
       }
     };
     window.addEventListener('keydown', handleClose);
-    console.log('add');
     return () => {
       window.removeEventListener('keydown', handleClose);
-      console.log('rem');
     };
   }, [isOpen, toggleModal]);
 

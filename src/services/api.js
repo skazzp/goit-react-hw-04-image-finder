@@ -18,11 +18,12 @@ export const getPictures = async (query, page) => {
     else config.params.q = query;
     if (page !== 1) config.params.page = page;
     const response = await axios(config);
-    if (!response.data.hits.length) {
-      // console.log('ERROR ALLO');
-      // throw new Error('xz');
-      // return new Error('');
-    }
+    // if (!response.data.hits.length) {
+    // console.log('ERROR ALLO');
+    // throw new Error('xz');
+    // return new Error('');
+    // throw error;
+    // }
     return response.data;
   } catch (error) {
     //     "We're sorry, but you've reached the end of search results."

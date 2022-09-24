@@ -23,7 +23,7 @@ const App = () => {
     setIsLoading(() => true);
     try {
       const data = await API.getPictures(query, page);
-      console.log(data);
+
       if (!data.hits.length) {
         setError({ message: 'Response is empty', status: 'warning' });
 
@@ -34,7 +34,7 @@ const App = () => {
         !prevResponse ? data.hits : [...prevResponse, ...data.hits]
       );
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setResponse([]);
     }
     setIsLoading(false);
@@ -76,8 +76,6 @@ const App = () => {
       toast[error.notify?.status || error.status](
         error.notify?.message || error.message
       );
-    // error;
-    // }, [error]);
     error && resetError(null);
   }, [error, resetError]);
 
