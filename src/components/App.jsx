@@ -1,4 +1,3 @@
-// import axios from 'axios';
 import { useState, useEffect, useCallback } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import * as API from '../services/api';

@@ -1,5 +1,6 @@
 import { ModalPic, Overlay } from './Modal.styled';
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const Modal = ({ toggleModal, largeImageURL }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -33,3 +34,8 @@ const Modal = ({ toggleModal, largeImageURL }) => {
 };
 
 export default Modal;
+
+Overlay.propTypes = {
+  toggleModal: PropTypes.func,
+  largeImageURL: PropTypes.string,
+};
