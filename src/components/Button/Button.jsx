@@ -1,4 +1,5 @@
 import { LoadMoreBtn } from './Button.styled';
+import PropTypes from 'prop-types';
 
 const Button = ({ changePage }) => {
   return (
@@ -9,3 +10,7 @@ const Button = ({ changePage }) => {
 };
 
 export default Button;
+
+LoadMoreBtn.propTypes = {
+  changePage: PropTypes.func,
+};
